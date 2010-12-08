@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Untitled Document</title>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+<script type="text/javascript" src="jquery.youtubeplaylist.js"></script>
+
+<script type="text/ecmascript">
+	
+		$(function() {
+			$("ul.demo1").ytplaylist({
+				addThumbs:true, 
+				autoPlay: false, 
+				playerWidth: '320',
+				playerHeight: '240',
+				thumbSize: 'large',
+				showInline: true
+				});
+		});
+	
+</script>
+
+<style type="text/css">
+	
+
+
+#ytvideo {
+    float: left;
+	margin-right:10px;
+}
+
+
+ul {
+    padding: 0;
+    margin: 0;
+}
+
+ul li {
+    width: 320px;
+    height: 240px;
+    padding: 6px;
+    float: left;
+    margin: 0 10px 10px 0;
+    overflow: hidden;
+    background: #e5e5e5;
+}
+
+
+ul li a {
+    font-family: georgia;
+    text-decoration: none;
+    display: block;
+    color: blue;
+    border: none;
+}
+
+ul li img {
+    border: none;
+}
+
+.currentvideo {
+	background: #bbb;
+}
+	
+
+	
+</style>
+
+</head>
+
+<body>
+    
+    <p>code for this demo</p>
+    <code>
+	<pre>
+    $("ul.demo1").ytplaylist({
+        addThumbs:true, 
+        autoPlay: false, 
+        playerWidth: '320',
+        playerHeight: '240',
+        thumbSize: 'large',
+        showInline: true
+        });
+    </pre>
+    </code>
+    
+    <ul class="demo1">
+        <li><a href="http://www.youtube.com/watch?v=QBBWKvY-VDc"></a></li>
+        <li><a href="http://www.youtube.com/watch?v=ZXMQqLnRhRI"></a></li>
+        <li><a href="http://www.youtube.com/watch?v=Wvo-g_JvURI"></a></li>
+        <li><a href="http://www.youtube.com/watch?v=nTasT5h0LEg"></a></li>
+        <li><a href="http://www.youtube.com/watch?v=kkT7A3jegBc"></a></li>
+        <li><a href="http://www.youtube.com/watch?v=nFaFObINn6o"></a></li>
+        <li><a href="http://www.youtube.com/watch?v=tcxhOGyrCtI"></a></li>
+        <li><a href="http://www.youtube.com/watch?v=USXJrvIugEo"></a></li>
+        <li><a href="http://www.youtube.com/watch?v=7bcV-TL9mho"></a></li>
+    </ul>
+
+</body>
+</html>
