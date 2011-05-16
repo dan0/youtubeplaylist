@@ -125,9 +125,13 @@ jQuery.fn.ytplaylist = function(options) {
 		$el.find("a.img-link").click(function() {
 		    var $img = $('<img/>');
 		    $img.attr({
-		        src:$(this).attr('href'),
-		        width : options.playerWidth });
-		    
+		            src:$(this).attr('href'),
+		            width : options.playerWidth })
+		        .css({
+		            display: 'none',
+		            position: 'absolute',
+		            top: '50%'});
+
 		    if(options.showInline) {
 		        $("li.currentvideo").removeClass("currentvideo");
 		        $(this).parent("li").addClass("currentvideo").html($img);
@@ -135,15 +139,16 @@ jQuery.fn.ytplaylist = function(options) {
 	        else {
 	            
 	            $("#"+options.holderId+"").html($img);
-	            var contentGap = options.playerHeight - parseInt($img.height(), 10);
-	            $img.css({
-	                position: 'relative',
-	                top: parseInt(contentGap/2, 10)
-	            })
 				$(this).closest("ul").find("li.currentvideo").removeClass("currentvideo");
 				$(this).parent("li").addClass("currentvideo");
 				
 	        }
+            
+            setTimeout(function() {
+                $img.css('margin-top',parseInt($img.height()/-2, 10));
+                $img.fadeIn();
+            }, 100);
+            
             
 		    return false;
 	    });
