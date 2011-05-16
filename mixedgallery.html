@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Untitled Document</title>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+<script type="text/javascript" src="jquery.youtubeplaylist.js"></script>
+
+<script type="text/ecmascript">
+	
+		$(function() {
+			$("ul.demo1").ytplaylist();
+			$("ul.demo2").ytplaylist({addThumbs:true, autoPlay: false, holderId: 'ytvideo2'});
+		});
+	
+</script>
+
+<style type="text/css">
+	
+
+	
+
+#ytvideo,
+#ytvideo2 {
+    float: left;
+	margin-right:10px;
+	width:450px;
+	height: 300px;
+	overflow:hidden;
+	background: #999;
+}
+
+
+.yt_holder {
+    background: #f3f3f3;
+    padding: 10px;
+    float: left;
+    border: 1px solid #e3e3e3;
+	margin-bottom:15px;
+
+}
+
+
+ul {
+    float: left;
+    margin: 0;
+    padding: 0;
+    width: 130px;
+}
+
+ul li {
+    list-style-type: none;
+    display:block;
+    background: #f1f1f1;
+    float: left;
+    width: 120px;
+    margin-bottom: 5px;
+	padding:2px;
+
+}
+
+ul li img {
+    width: 120px;
+    float: left;
+    margin-right: 5px;
+    border: 1px solid #999;
+}
+
+ul li a {
+    font-family: georgia;
+    text-decoration: none;
+    display: block;
+    color: #000;
+}
+
+.currentvideo {
+	background: #e6e6e6;
+	outline: 1px solid red;
+}
+	
+
+	
+</style>
+
+</head>
+
+<body>
+
+	<div id="page">
+    	
+        <h1>jQuery YouTube playlist plugin</h1>
+        <p>Update 16/05/2011 </p>
+
+           
+        <p>javascript for the following example with autoplay off, thumbnails and a new holder id</p>    
+    	
+        <code>
+        	<pre>
+    $("ul.demo2").ytplaylist({addThumbs:true, autoPlay: false, holderId: 'ytvideo2'});
+            </pre>
+        </code>    
+    <div class="yt_holder">
+    	<div id="ytvideo2"></div>
+        <ul class="demo2">
+            <li><a href="http://www.youtube.com/watch?v=QBBWKvY-VDc"></a></li>
+            <li><a href="http://www.youtube.com/watch?v=ZXMQqLnRhRI"></a></li>
+            <li><a href="http://youtu.be/L0CsLefLisE"></a></li>
+			<li><a href="IMG_2927.JPG">Yo</a></li>
+			<li><a href="IMG_2906.JPG">Test 2</a></li>
+        </ul>
+    </div>
+    
+    
+    
+    </div>
+
+	
+</body>
+</html>
