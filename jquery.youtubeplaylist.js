@@ -77,9 +77,6 @@ jQuery.fn.ytplaylist = function(options) {
 		};
 		
 		
-		//load inital video
-		var firstVid = $el.children("li:first-child").addClass("currentvideo").children("a").attr("href");
-		$("#"+options.holderId+"").html(playOld(youtubeid(firstVid)));
 		
 		//
 		$el.children('li').each(function() {
@@ -130,6 +127,7 @@ jQuery.fn.ytplaylist = function(options) {
 		        .css({
 		            display: 'none',
 		            position: 'absolute',
+		            left: '0px',
 		            top: '50%'});
 
 		    if(options.showInline) {
@@ -143,9 +141,20 @@ jQuery.fn.ytplaylist = function(options) {
 				$(this).parent("li").addClass("currentvideo");
 				
 	        }
-            
+            //wait for image to load (webkit!), then set width or height
+            //based on dimensions of the image
             setTimeout(function() {
-                $img.css('margin-top',parseInt($img.height()/-2, 10));
+                if ( $img.height() < $img.width() ) {
+                    $img.css('margin-top',parseInt($img.height()/-2, 10));
+                }
+                else {
+                    $img.css({
+                        height: options.playerHeight,
+                        width: 'auto',
+                        top: '0px',
+                        position: 'relative'
+                    });
+                }
                 $img.fadeIn();
             }, 100);
             
@@ -180,16 +189,15 @@ jQuery.fn.ytplaylist = function(options) {
 				    //is an image link
 				    var $img = $('<img/>').attr('src',$link.attr('href'));
 				    $link.empty().html($img).attr("title", replacedText);
-				}
-				
-				
-				
-				
-				
+				}	
 				
 			});	
 			
 		}
+		
+		//load inital video
+		var firstVid = $el.children("li:first-child").addClass("currentvideo").children("a").click();
+        
 			
 		
    
