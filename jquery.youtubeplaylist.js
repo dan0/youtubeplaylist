@@ -122,7 +122,7 @@ jQuery.fn.ytplaylist = function(options) {
 		$el.find("a.img-link").click(function() {
 		    var $img = $('<img/>');
 		    $img.attr({
-		            src:$(this).attr('href')})
+		            src:$(this).attr('href') })
 		        .css({
 		            display: 'none',
 		            position: 'absolute',
@@ -144,7 +144,9 @@ jQuery.fn.ytplaylist = function(options) {
             //based on dimensions of the image
             setTimeout(function() {
                 if ( $img.height() < $img.width() ) {
-                    $img.css('margin-top',parseInt($img.height()/-2, 10)).width(options.playerWidth);
+                    $img.width(options.playerWidth).css('margin-top',parseInt($img.height()/-2, 10)).css({
+                        height: 'auto'
+                    });
                 }
                 else {
                     $img.css({
