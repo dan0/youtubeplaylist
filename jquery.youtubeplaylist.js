@@ -65,7 +65,9 @@ jQuery.fn.ytplaylist = function(options) {
 		  var html = '';
 		  html += '<iframe width="'+ options.playerWidth +'" height="'+ options.playerHeight +'"';
 		  html += ' src="http://www.youtube.com/embed/'+ id +'" frameborder="0"';
-		  hml += ' allowfullscreen></iframe>';
+		  html += ' allowfullscreen></iframe>';
+
+		  return html;
 		}
 		
 		
@@ -109,10 +111,10 @@ jQuery.fn.ytplaylist = function(options) {
 			
 			if(options.showInline) {
 				$("li.currentvideo").removeClass("currentvideo");
-				$(this).parent("li").addClass("currentvideo").html(playOld($(this).data("yt-id")));
+				$(this).parent("li").addClass("currentvideo").html(playNew($(this).data("yt-id")));
 			}
 			else {
-				$("#"+options.holderId+"").html(playOld($(this).data("yt-id")));
+				$("#"+options.holderId+"").html(playNew($(this).data("yt-id")));
 				$(this).parent().parent("ul").find("li.currentvideo").removeClass("currentvideo");
 				$(this).parent("li").addClass("currentvideo");
 			}	
