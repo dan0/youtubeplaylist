@@ -64,7 +64,7 @@ jQuery.fn.ytplaylist = function(options) {
 		function playNew (id) {
 		  var html = '';
 		  html += '<iframe width="'+ options.playerWidth +'" height="'+ options.playerHeight +'"';
-		  html += ' src="http://www.youtube.com/embed/'+ id +'?wmode=opaque" frameborder="0"';
+		  html += ' src="http://www.youtube.com/embed/'+ id +'?wmode=opaque' + showRelated + '" frameborder="0"';
 		  html += ' allowfullscreen></iframe>';
 
 		  return html;
