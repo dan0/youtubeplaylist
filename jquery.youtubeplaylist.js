@@ -31,7 +31,7 @@ jQuery.fn.ytplaylist = function(options) {
  
   return this.each(function() {
 							
-   		var $el = $(this);
+   		var $el = jQuery(this);
 		
 		var autoPlay = "";
 		var showRelated = "&rel=0";
@@ -64,7 +64,7 @@ jQuery.fn.ytplaylist = function(options) {
 		function playNew (id) {
 		  var html = '';
 		  html += '<iframe width="'+ options.playerWidth +'" height="'+ options.playerHeight +'"';
-		  html += ' src="http://www.youtube.com/embed/'+ id +'" frameborder="0"';
+		  html += ' src="http://www.youtube.com/embed/'+ id +'?wmode=opaque' + showRelated + '" frameborder="0"';
 		  html += ' allowfullscreen></iframe>';
 
 		  return html;
@@ -82,23 +82,23 @@ jQuery.fn.ytplaylist = function(options) {
 		
 		//
 		$el.children('li').each(function() {
-            $(this).find('a').each(function() {
-                var thisHref = $(this).attr('href');
+            jQuery(this).find('a').each(function() {
+                var thisHref = jQuery(this).attr('href');
                 
                 //old-style youtube links
                 if (thisHref.startsWith('http://www.youtube.com')) {
-                    $(this).addClass('yt-vid');
-                    $(this).data('yt-id', youtubeid(thisHref) );
+                    jQuery(this).addClass('yt-vid');
+                    jQuery(this).data('yt-id', youtubeid(thisHref) );
                 }
                 //new style youtu.be links
                 else if (thisHref.startsWith('http://youtu.be')) {
-                    $(this).addClass('yt-vid');
+                    jQuery(this).addClass('yt-vid');
                     var id = thisHref.substr(thisHref.lastIndexOf("/") + 1);
-                    $(this).data('yt-id', id );
+                    jQuery(this).data('yt-id', id );
                 }
                 else {
                     //must be an image link (naive)
-                    $(this).addClass('img-link');
+                    jQuery(this).addClass('img-link');
                 }
                 
                // alert(thisHref);
@@ -110,21 +110,21 @@ jQuery.fn.ytplaylist = function(options) {
 		$el.children("li").children("a.yt-vid").click(function() {
 			
 			if(options.showInline) {
-				$("li.currentvideo").removeClass("currentvideo");
-				$(this).parent("li").addClass("currentvideo").html(playNew($(this).data("yt-id")));
+				jQuery("li.currentvideo").removeClass("currentvideo");
+				jQuery(this).parent("li").addClass("currentvideo").html(playNew(jQuery(this).data("yt-id")));
 			}
 			else {
-				$("#"+options.holderId+"").html(playNew($(this).data("yt-id")));
-				$(this).parent().parent("ul").find("li.currentvideo").removeClass("currentvideo");
-				$(this).parent("li").addClass("currentvideo");
+				jQuery("#"+options.holderId+"").html(playNew(jQuery(this).data("yt-id")));
+				jQuery(this).parent().parent("ul").find("li.currentvideo").removeClass("currentvideo");
+				jQuery(this).parent("li").addClass("currentvideo");
 			}	
 			return false;
 		});
 
 		$el.find("a.img-link").click(function() {
-		    var $img = $('<img/>');
+		    var $img = jQuery('<img/>');
 		    $img.attr({
-		            src:$(this).attr('href') })
+		            src:jQuery(this).attr('href') })
 		        .css({
 		            display: 'none',
 		            position: 'absolute',
@@ -132,14 +132,14 @@ jQuery.fn.ytplaylist = function(options) {
 		            top: '50%'});
 
 		    if(options.showInline) {
-		        $("li.currentvideo").removeClass("currentvideo");
-		        $(this).parent("li").addClass("currentvideo").html($img);
+		        jQuery("li.currentvideo").removeClass("currentvideo");
+		        jQuery(this).parent("li").addClass("currentvideo").html($img);
 	        }
 	        else {
 	            
-	            $("#"+options.holderId+"").html($img);
-				$(this).closest("ul").find("li.currentvideo").removeClass("currentvideo");
-				$(this).parent("li").addClass("currentvideo");
+	            jQuery("#"+options.holderId+"").html($img);
+				jQuery(this).closest("ul").find("li.currentvideo").removeClass("currentvideo");
+				jQuery(this).parent("li").addClass("currentvideo");
 				
 	        }
             //wait for image to load (webkit!), then set width or height
@@ -172,8 +172,8 @@ jQuery.fn.ytplaylist = function(options) {
 			$el.children().each(function(i){
 				
 				//replace first link
-				var $link = $(this).find('a:first');
-				var replacedText = $(this).text();
+				var $link = jQuery(this).find('a:first');
+				var replacedText = jQuery(this).text();
 				
 				if ($link.hasClass('yt-vid')) {
 				    
@@ -190,7 +190,7 @@ jQuery.fn.ytplaylist = function(options) {
 				}
 				else {
 				    //is an image link
-				    var $img = $('<img/>').attr('src',$link.attr('href'));
+				    var $img = jQuery('<img/>').attr('src',$link.attr('href'));
 				    $link.empty().html($img).attr("title", replacedText);
 				}	
 				
