@@ -5,7 +5,7 @@
  *  Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
  */
 
-jQuery.fn.ytplaylist = function(options) {
+jQuery.fn.ytplaylist = function(opts) {
  
 	// default settings
 	var options = jQuery.extend({
@@ -18,7 +18,7 @@ jQuery.fn.ytplaylist = function(options) {
 		autoPlay: true,
 		showRelated: true,
 		allowFullScreen: false
-	},options);
+	}, opts);
  
 	function startsWith(str, match) {
 		return (str.indexOf(match) === 0);
