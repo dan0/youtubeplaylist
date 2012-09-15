@@ -5,11 +5,6 @@
  *  Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
  */
 
-String.prototype.startsWith = function(str){
-    return (this.indexOf(str) === 0);
-};
-
-
 jQuery.fn.ytplaylist = function(options) {
  
 	// default settings
@@ -25,6 +20,10 @@ jQuery.fn.ytplaylist = function(options) {
 		allowFullScreen: false
 	},options);
  
+	function startsWith(str, match) {
+		return (str.indexOf(match) === 0);
+	}
+
 	return this.each(function() {
 							
 		var $el = jQuery(this);
@@ -82,12 +81,12 @@ jQuery.fn.ytplaylist = function(options) {
 				var thisHref = jQuery(this).attr('href');
 
 				//old-style youtube links
-				if (thisHref.startsWith('http://www.youtube.com')) {
+				if (startsWith(thisHref, 'http://www.youtube.com')) {
 					jQuery(this).addClass('yt-vid');
 					jQuery(this).data('yt-id', youtubeid(thisHref) );
 				}
 				//new style youtu.be links
-				else if (thisHref.startsWith('http://youtu.be')) {
+				else if (startsWith(thisHref, 'http://youtu.be')) {
 					jQuery(this).addClass('yt-vid');
 					var id = thisHref.substr(thisHref.lastIndexOf("/") + 1);
 					jQuery(this).data('yt-id', id );
