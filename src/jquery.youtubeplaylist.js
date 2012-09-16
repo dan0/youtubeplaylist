@@ -1,198 +1,269 @@
 /**
  *  jquery.youtubeplaylist.js
- *  dan@allbutlost.com
+ *
+ *  By Dan Drayne
+ *  https://github.com/dan0/youtubeplaylist/
  *
  *  Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
  */
 
-jQuery.fn.ytplaylist = function(opts) {
- 
-	// default settings
-	var options = jQuery.extend({
-		holderId: 'ytvideo',
-		playerHeight: 300,
-		playerWidth: 450,
-		addThumbs: false,
-		thumbSize: 'small',
-		showInline: false,
-		autoPlay: true,
-		showRelated: true,
-		allowFullScreen: false
-	}, opts);
- 
-	function startsWith(str, match) {
-		return (str.indexOf(match) === 0);
-	}
+(function ( $, window, document, undefined ) {
 
-	return this.each(function() {
-							
-		var $el = jQuery(this);
-		
-		var autoPlay = "";
-		var showRelated = "&rel=0";
-		var fullScreen = "";
-		if(options.autoPlay) autoPlay = "&autoplay=1";
-		if(options.showRelated) showRelated = "&rel=1";
-		if(options.allowFullScreen) fullScreen = "&fs=1";
-		
-		//throw a youtube player in
-		function playOld(id) {
-			var html  = '';
-	
-			html += '<object height="'+options.playerHeight+'" width="'+options.playerWidth+'">';
-			html += '<param name="movie" value="http://www.youtube.com/v/'+id+autoPlay+showRelated+fullScreen+'"> </param>';
-			html += '<param name="wmode" value="transparent"> </param>';
-			if(options.allowFullScreen) {
-				html += '<param name="allowfullscreen" value="true"> </param>';
-			}
-			html += '<embed src="http://www.youtube.com/v/'+id+autoPlay+showRelated+fullScreen+'"';
-			if(options.allowFullScreen) {
-				html += ' allowfullscreen="true" ';
-			}
-			html += 'type="application/x-shockwave-flash" wmode="transparent"  height="'+options.playerHeight+'" width="'+options.playerWidth+'"></embed>';
-			html += '</object>';
-			
-			return html;
-		}
-		
-		
-		function playNew (id) {
-			var html = '';
-			html += '<iframe width="'+ options.playerWidth +'" height="'+ options.playerHeight +'"';
-			html += ' src="http://www.youtube.com/embed/'+ id +'?wmode=opaque' + showRelated + '" frameborder="0"';
-			html += ' allowfullscreen></iframe>';
+  var pluginName = 'ytplaylist';
+  var defaults = {
+        holderId: 'ytvideo',
+        playerHeight: 300,
+        playerWidth: 450,
+        addThumbs: false,
+        thumbSize: 'small',
+        showInline: false,
+        autoPlay: true,
+        showRelated: true,
+        allowFullScreen: false,
+        start: 1
+      };
+      //TODO: Allow secure embeds
 
-			return html;
-		}
-		
-		
-		//grab a youtube id from a (clean, no querystring) url (thanks to http://jquery-howto.blogspot.com/2009/05/jyoutube-jquery-youtube-thumbnail.html)
-		function youtubeid(url) {
-			var ytid = url.match("[\\?&]v=([^&#]*)");
-			ytid = ytid[1];
-			return ytid;
-		}
-		
-		
-		
-		//
-		$el.children('li').each(function() {
-			jQuery(this).find('a').each(function() {
-				var thisHref = jQuery(this).attr('href');
-
-				//old-style youtube links
-				if (startsWith(thisHref, 'http://www.youtube.com')) {
-					jQuery(this).addClass('yt-vid');
-					jQuery(this).data('yt-id', youtubeid(thisHref) );
-				}
-				//new style youtu.be links
-				else if (startsWith(thisHref, 'http://youtu.be')) {
-					jQuery(this).addClass('yt-vid');
-					var id = thisHref.substr(thisHref.lastIndexOf("/") + 1);
-					jQuery(this).data('yt-id', id );
-				}
-				else {
-					//must be an image link (naive)
-					jQuery(this).addClass('img-link');
-				}
-			});
-		});
-		
-		
-		//load video on request
-		$el.children("li").children("a.yt-vid").click(function() {
-			
-			if(options.showInline) {
-				jQuery("li.currentvideo").removeClass("currentvideo");
-				jQuery(this).parent("li").addClass("currentvideo").html(playNew(jQuery(this).data("yt-id")));
-			}
-			else {
-				jQuery("#"+options.holderId+"").html(playNew(jQuery(this).data("yt-id")));
-				jQuery(this).parent().parent("ul").find("li.currentvideo").removeClass("currentvideo");
-				jQuery(this).parent("li").addClass("currentvideo");
-			}
-			return false;
-		});
-
-		$el.find("a.img-link").click(function() {
-			var $img = jQuery('<img/>');
-				$img.attr({src:jQuery(this).attr('href') })
-					.css({
-						display: 'none',
-						position: 'absolute',
-						left: '0px',
-						top: '50%'});
-
-				if(options.showInline) {
-					jQuery("li.currentvideo").removeClass("currentvideo");
-					jQuery(this).parent("li").addClass("currentvideo").html($img);
-				}
-				else {
-					jQuery("#"+options.holderId+"").html($img);
-					jQuery(this).closest("ul").find("li.currentvideo").removeClass("currentvideo");
-					jQuery(this).parent("li").addClass("currentvideo");
-				}
-
-				//wait for image to load (webkit!), then set width or height
-				//based on dimensions of the image
-				setTimeout(function() {
-					if ( $img.height() < $img.width() ) {
-						$img.width(options.playerWidth).css('margin-top',parseInt($img.height()/-2, 10)).css({
-							height: 'auto'
-						});
-					}
-					else {
-						$img.css({
-							height: options.playerHeight,
-							width: 'auto',
-							top: '0px',
-							position: 'relative'
-						});
-					}
-				
-					$img.fadeIn();
-				
-				}, 100);
+     
+  /**
+   * Get a youtube id from a url
+   *
+   * @param  {String} url Url to youtube video.
+   * @return {String|Null}     Id of video, or null if none found.
+   */
+  
+  function youtubeid(url) {
+    var id = null;
+    if (url.indexOf('//www.youtube.com') !== -1) {
+      id = url.match("[\\?&]v=([^&#]*)")[1];
+    }
+    else if (url.indexOf('http://youtu.be') !== -1){
+      id = url.substr(url.lastIndexOf("/") + 1);
+    }
+    return id;
+  }
 
 
-			return false;
-		});
-		
-		
-		//do we want thumns with that?
-		if(options.addThumbs) {
-			
-			$el.children().each(function(i){
-				
-				//replace first link
-				var $link = jQuery(this).find('a:first');
-				var replacedText = jQuery(this).text();
-				var thumbUrl;
-				if ($link.hasClass('yt-vid')) {
-					if(options.thumbSize == 'small') {
-						thumbUrl = "http://img.youtube.com/vi/"+$link.data("yt-id")+"/2.jpg";
-					}
-					else {
-						thumbUrl = "http://img.youtube.com/vi/"+$link.data("yt-id")+"/0.jpg";
-					}
 
-					var thumbHtml = "<img src='"+thumbUrl+"' alt='"+replacedText+"' />";
-					$link.empty().html(thumbHtml+replacedText).attr("title", replacedText);
+  /**
+   * Main plugin contstructor
+   *
+   * @param {Object} element object representing UL element.
+   * @param {Object} options Options object.
+   */
+  
+  function Plugin(element, options ) {
+      this.element = element;
+      this.options = $.extend( {}, defaults, options) ;
+      this._defaults = defaults;
+      this._name = pluginName;
 
-				}
-				else {
-					//is an image link
-					var $img = jQuery('<img/>').attr('src',$link.attr('href'));
-					$link.empty().html($img).attr("title", replacedText);
-				}
-				
-			});
-			
-		}
-		
-		//load inital video
-		var firstVid = $el.children("li:first-child").addClass("currentvideo").children("a").click();
+      this._autoPlay = (this.options.autoPlay) ? '&autoplay=1' : '';
+      this._showRelated = (this.options.showRelated) ? '&rel=1' : '';
+      this._fullscreen = (this.options.allowfullscreen) ? '&fs=1' : '';
 
-	});
+      this.init();
+  }
 
-};
+
+  Plugin.prototype = {
+      
+      /**
+       * Initialise gallery
+       *
+       * Loop through <li> elements, setting up click
+       * handlers etc.
+       */
+      
+      init: function() {
+        var self = this;
+        // Setup initial classification of content
+        $(self.element).children('li').each(function(index) {
+
+          var listItem = $(this);
+
+          listItem.find('a:first').each(function() {
+            
+            var link = $(this);
+            var ytid = youtubeid(link.attr('href'));
+            var replacedText = listItem.text();
+
+            if (ytid) {
+              link.addClass('yt-vid');
+              link.data('yt-id', ytid);
+              link.click(function(e) {
+                e.preventDefault();
+                self.handleVideoClick(link, self.options);
+              });
+              if (self.options.addThumbs) {
+                
+                if(self.options.thumbSize == 'small') {
+                  thumbUrl = 'http://img.youtube.com/vi/' + ytid + '/2.jpg';
+                }
+                else {
+                  thumbUrl = 'http://img.youtube.com/vi/' + ytid + '/0.jpg';
+                }
+                var thumbHtml = '<img src="' + thumbUrl + '" alt="' + replacedText + '" />';
+                link.empty().html(thumbHtml + replacedText).attr('title', replacedText);
+              }
+            }
+            else {
+              //must be an image link (naive)
+              link.addClass('img-link');
+              link.click(function(e) {
+                e.preventDefault();
+                self.handleImageClick(link, self.options);
+              });
+
+              if (self.options.addThumbs) {
+                var $img = $('<img/>').attr('src', link.attr('href'));
+                link.empty().html($img).attr("title", replacedText);
+              }
+
+            }
+            
+          });
+
+
+          if (index + 1 === self.options.start) {
+            listItem.children('a')[0].click();
+          }
+
+        });
+
+      },
+      
+
+      /**
+       * Get old-style youtube embed code
+       *
+       * @param  {Object} options Plugin options object.
+       * @param  {String} id      ID of youtube video.
+       * @return {String}         HTML embed code.
+       */
+      
+      getOldEmbedCode: function(options, id) {
+        //throw a youtube player in
+        var html  = '';
+        
+        html += '<object height="' + options.playerHeight + '" width="' + options.playerWidth + '">';
+        html += '<param name="movie" value="http://www.youtube.com/v/' + id + this._autoPlay + this._showRelated + this._fullScreen + '"> </param>';
+        html += '<param name="wmode" value="transparent"> </param>';
+        if(options.allowFullScreen) {
+          html += '<param name="allowfullscreen" value="true"> </param>';
+        }
+        html += '<embed src="http://www.youtube.com/v/' + id + this._autoPlay + this._showRelated + this._fullScreen + '"';
+        if(options.allowFullScreen) {
+          html += ' allowfullscreen="true" ';
+        }
+        html += 'type="application/x-shockwave-flash" wmode="transparent"  height="' + options.playerHeight + '" width="' + options.playerWidth + '"></embed>';
+        html += '</object>';
+        
+        return html;
+      },
+
+
+      /**
+       * Get new-style youtube embed code
+       *
+       * @param  {Object} options Plugin options object.
+       * @param  {String} id      ID of youtube video.
+       * @return {String}         HTML embed code.
+       */
+
+      getNewEmbedCode: function(options, id) {
+        var html = '';
+        html += '<iframe width="' + options.playerWidth + '" height="' + options.playerHeight + '"';
+        html += ' src="http://www.youtube.com/embed/' + id + '?wmode=opaque' + this._showRelated + '" frameborder="0"';
+        html += ' allowfullscreen></iframe>';
+
+        return html;
+      },
+
+
+      /**
+       * Handle clicks on video items
+       *
+       * @param  {Object} link    jQuery object representing clicked link.
+       * @param  {Object} options Plugin options object.
+       * @return {Boolean}        False, cancelling click event.
+       */
+      
+      handleVideoClick: function(link, options) {
+        var self = this;
+        if(options.showInline) {
+          $('li.currentvideo').removeClass('currentvideo');
+          link.parent('li').addClass('currentvideo').html(self.getNewEmbedCode(self.options, link.data('yt-id')));
+        }
+        else {
+          $('#' + options.holderId).html(self.getNewEmbedCode(self.options, link.data('yt-id')));
+          link.parent().parent('ul').find('li.currentvideo').removeClass('currentvideo');
+          link.parent('li').addClass('currentvideo');
+        }
+        return false;
+      },
+
+
+      /**
+       * Handle clicks on image items
+       *
+       * @param  {Object} link    jQuery object representing clicked link.
+       * @param  {Object} options Plugin options object.
+       * @return {Boolean}        False, cancelling click event.
+       */
+
+      handleImageClick: function(link, options) {
+        var thisImage = $('<img/>');
+        var $link = $(link);
+        thisImage.attr({src:$link.attr('href') })
+          .css({
+            display: 'none',
+            position: 'absolute',
+            left: '0px',
+            top: '50%'});
+
+        if(options.showInline) {
+          $('li.currentvideo').removeClass('currentvideo');
+          $link.parent('li').addClass('currentvideo').html(thisImage);
+        }
+        else {
+          $('#' + options.holderId).html(thisImage);
+          $link.closest('ul').find('li.currentvideo').removeClass('currentvideo');
+          $link.parent('li').addClass('currentvideo');
+        }
+
+        //wait for image to load (webkit!), then set width or height
+        //based on dimensions of the image
+        setTimeout(function() {
+          if (thisImage.height() < thisImage.width()) {
+            thisImage.width(options.playerWidth).css('margin-top',parseInt(thisImage.height()/-2, 10)).css({
+              height: 'auto'
+            });
+          }
+          else {
+            thisImage.css({
+              height: options.playerHeight,
+              width: 'auto',
+              top: '0px',
+              position: 'relative'
+            });
+          }
+          thisImage.fadeIn();
+        
+        }, 100);
+
+
+        return false;
+      }
+  };
+
+  $.fn[pluginName] = function (options) {
+      return this.each(function () {
+          if (!$.data(this, 'plugin_' + pluginName)) {
+              $.data(this, 'plugin_' + pluginName,
+              new Plugin(this, options));
+          }
+      });
+  };
+
+})(jQuery, window, document);
