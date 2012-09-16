@@ -20,18 +20,19 @@
         autoPlay: true,
         showRelated: true,
         allowFullScreen: false,
+        deepLinks: false,
         start: 1
       };
       //TODO: Allow secure embeds
 
-     
+
   /**
    * Get a youtube id from a url
    *
    * @param  {String} url Url to youtube video.
    * @return {String|Null}     Id of video, or null if none found.
    */
-  
+
   function youtubeid(url) {
     var id = null;
     if (url.indexOf('//www.youtube.com') !== -1) {
@@ -51,7 +52,7 @@
    * @param {Object} element object representing UL element.
    * @param {Object} options Options object.
    */
-  
+
   function Plugin(element, options ) {
       this.element = element;
       this.options = $.extend( {}, defaults, options) ;
@@ -67,36 +68,38 @@
 
 
   Plugin.prototype = {
-      
+
       /**
        * Initialise gallery
        *
        * Loop through <li> elements, setting up click
        * handlers etc.
        */
-      
+
       init: function() {
         var self = this;
+        var initialItem = self.options.deepLinks && window.location.hash.indexOf('#yt-gal-') !== -1 ? window.location.hash : null;
         // Setup initial classification of content
         $(self.element).children('li').each(function(index) {
 
           var listItem = $(this);
+          var listIndex = index + 1;
 
           listItem.find('a:first').each(function() {
-            
+
             var link = $(this);
             var ytid = youtubeid(link.attr('href'));
             var replacedText = listItem.text();
 
+            link.data('yt-href', link.attr('href'));
+            link.attr('href', '#yt-gal-' + listIndex);
+
             if (ytid) {
+
               link.addClass('yt-vid');
               link.data('yt-id', ytid);
-              link.click(function(e) {
-                e.preventDefault();
-                self.handleVideoClick(link, self.options);
-              });
               if (self.options.addThumbs) {
-                
+
                 if(self.options.thumbSize == 'small') {
                   thumbUrl = 'http://img.youtube.com/vi/' + ytid + '/2.jpg';
                 }
@@ -110,29 +113,49 @@
             else {
               //must be an image link (naive)
               link.addClass('img-link');
-              link.click(function(e) {
-                e.preventDefault();
-                self.handleImageClick(link, self.options);
-              });
-
               if (self.options.addThumbs) {
-                var $img = $('<img/>').attr('src', link.attr('href'));
+                var $img = $('<img/>').attr('src', link.data('yt-href'));
                 link.empty().html($img).attr("title", replacedText);
               }
 
             }
-            
+
+            if (!self.options.deepLinks) {
+              link.click(function(e) {
+                e.preventDefault();
+                self.handleClick(link, self.options);
+              });
+            }
+
           });
 
-
-          if (index + 1 === self.options.start) {
-            listItem.children('a')[0].click();
+          var firstLink = $(listItem.children('a')[0]);
+          if (initialItem) {
+            if (firstLink.attr('href') === initialItem) {
+              self.handleClick(firstLink, self.options);
+            }
+          }
+          else if (listIndex === self.options.start) {
+            self.handleClick(firstLink, self.options);
           }
 
         });
 
+        if (self.options.deepLinks) {
+          $(window).bind('hashchange', function(e) {
+            var hash = window.location.hash;
+            var clicked = $(self.element).find('a[href="' + hash + '"]');
+            if (clicked.length > 0) {
+              self.handleClick(clicked, self.options);
+            }
+            else if (hash === '') {
+              self.handleClick($(self.element).find('a:first'), self.options);
+            }
+          });
+        }
+
       },
-      
+
 
       /**
        * Get old-style youtube embed code
@@ -141,11 +164,11 @@
        * @param  {String} id      ID of youtube video.
        * @return {String}         HTML embed code.
        */
-      
+
       getOldEmbedCode: function(options, id) {
         //throw a youtube player in
         var html  = '';
-        
+
         html += '<object height="' + options.playerHeight + '" width="' + options.playerWidth + '">';
         html += '<param name="movie" value="http://www.youtube.com/v/' + id + this._autoPlay + this._showRelated + this._fullScreen + '"> </param>';
         html += '<param name="wmode" value="transparent"> </param>';
@@ -158,7 +181,7 @@
         }
         html += 'type="application/x-shockwave-flash" wmode="transparent"  height="' + options.playerHeight + '" width="' + options.playerWidth + '"></embed>';
         html += '</object>';
-        
+
         return html;
       },
 
@@ -182,13 +205,31 @@
 
 
       /**
+       * Handle clicks on all items
+       *
+       * @param  {Object} link    jQuery object representing clicked link.
+       * @param  {Object} options Plugin options object.
+       * @return {Function}       Appropriate handler function.
+       */
+
+      handleClick: function(link, options) {
+        if (link.hasClass('yt-vid')) {
+          return this.handleVideoClick(link, options);
+        }
+        else {
+          return this.handleImageClick(link, options);
+        }
+      },
+
+
+      /**
        * Handle clicks on video items
        *
        * @param  {Object} link    jQuery object representing clicked link.
        * @param  {Object} options Plugin options object.
        * @return {Boolean}        False, cancelling click event.
        */
-      
+
       handleVideoClick: function(link, options) {
         var self = this;
         if(options.showInline) {
@@ -215,7 +256,7 @@
       handleImageClick: function(link, options) {
         var thisImage = $('<img/>');
         var $link = $(link);
-        thisImage.attr({src:$link.attr('href') })
+        thisImage.attr({src:$link.data('yt-href') })
           .css({
             display: 'none',
             position: 'absolute',
@@ -249,7 +290,7 @@
             });
           }
           thisImage.fadeIn();
-        
+
         }, 100);
 
 

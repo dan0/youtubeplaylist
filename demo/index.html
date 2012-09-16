@@ -7,18 +7,18 @@
 <script type="text/javascript" src="../src/jquery.youtubeplaylist.js"></script>
 
 <script type="text/ecmascript">
-	
+
 		$(function() {
-			$("ul.demo1").ytplaylist();
+			$("ul.demo1").ytplaylist({deepLinks: true});
 			$("ul.demo2").ytplaylist({addThumbs:true, autoPlay: false, holderId: 'ytvideo2'});
 		});
-	
+
 </script>
 
 <style type="text/css">
-	
 
-	
+
+
 
 #ytvideo,
 #ytvideo2 {
@@ -71,9 +71,9 @@ ul li a {
 .currentvideo {
 	background: #e6e6e6;
 }
-	
 
-	
+
+
 </style>
 
 </head>
@@ -81,7 +81,7 @@ ul li a {
 <body>
 
 	<div id="page">
-    	
+
         <h1>jQuery YouTube playlist plugin</h1>
         <p><a href="#">back to blog post</a></p>
         <p>The html code for the following examples: (note that div.yt_holder is not required for the plugin and is used here simply to style the video area)</p>
@@ -96,17 +96,17 @@ ul li a {
         &lt;/ul&gt;
     &lt;/div&gt;
             </pre>
-        </code>		
-           
-           
-        <p>javascript for the following example (basic setup, no options used)</p>    
-    	
+        </code>
+
+
+        <p>javascript for the following example</p>
+
         <code>
         	<pre>
-    $("ul.demo1").ytplaylist();
+    $("ul.demo1").ytplaylist({deepLinks: true});
             </pre>
         </code>
-        
+
     	<div class="yt_holder">
     	<div id="ytvideo"></div>
         <ul class="demo1">
@@ -115,15 +115,15 @@ ul li a {
             <li><a href="http://youtu.be/L0CsLefLisE">Video 3</a></li>
         </ul>
     </div>
-    
+
     <div style="clear:both;"></div>
-        <p>javascript for the following example with autoplay off, thumbnails and a new holder id</p>    
-    	
+        <p>javascript for the following example with autoplay off, thumbnails and a new holder id</p>
+
         <code>
         	<pre>
     $("ul.demo2").ytplaylist({addThumbs:true, autoPlay: false, holderId: 'ytvideo2'});
             </pre>
-        </code>    
+        </code>
     <div class="yt_holder">
     	<div id="ytvideo2"></div>
         <ul class="demo2">
@@ -132,11 +132,11 @@ ul li a {
             <li><a href="http://youtu.be/L0CsLefLisE">Video 3</a></li>
         </ul>
     </div>
-    
-    
-    
+
+
+
     </div>
 
-	
+
 </body>
 </html>
