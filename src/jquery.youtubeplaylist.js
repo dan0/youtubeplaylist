@@ -21,9 +21,9 @@
         showRelated: true,
         allowFullScreen: false,
         deepLinks: false,
-        start: 1
+        start: 1,
+        secure: 'auto' //false|true|'auto'
       };
-      //TODO: Allow secure embeds
 
 
   /**
@@ -38,12 +38,11 @@
     if (url.indexOf('//www.youtube.com') !== -1) {
       id = url.match("[\\?&]v=([^&#]*)")[1];
     }
-    else if (url.indexOf('http://youtu.be') !== -1){
+    else if (url.indexOf('//youtu.be') !== -1){
       id = url.substr(url.lastIndexOf("/") + 1);
     }
     return id;
   }
-
 
 
   /**
@@ -59,10 +58,11 @@
       this._defaults = defaults;
       this._name = pluginName;
 
+      this._protocol = (this.options.secure === 'auto') ? window.location.protocol === 'https:' ? 'https://' : 'http://' :
+        this.options.secure ? 'https://' : 'http://';
       this._autoPlay = (this.options.autoPlay) ? '&autoplay=1' : '';
       this._showRelated = (this.options.showRelated) ? '&rel=1' : '';
       this._fullscreen = (this.options.allowfullscreen) ? '&fs=1' : '';
-
       this.init();
   }
 
@@ -101,10 +101,10 @@
               if (self.options.addThumbs) {
 
                 if(self.options.thumbSize == 'small') {
-                  thumbUrl = 'http://img.youtube.com/vi/' + ytid + '/2.jpg';
+                  thumbUrl = self._protocol + 'img.youtube.com/vi/' + ytid + '/2.jpg';
                 }
                 else {
-                  thumbUrl = 'http://img.youtube.com/vi/' + ytid + '/0.jpg';
+                  thumbUrl = seld._protocol + 'img.youtube.com/vi/' + ytid + '/0.jpg';
                 }
                 var thumbHtml = '<img src="' + thumbUrl + '" alt="' + replacedText + '" />';
                 link.empty().html(thumbHtml + replacedText).attr('title', replacedText);
@@ -170,12 +170,12 @@
         var html  = '';
 
         html += '<object height="' + options.playerHeight + '" width="' + options.playerWidth + '">';
-        html += '<param name="movie" value="http://www.youtube.com/v/' + id + this._autoPlay + this._showRelated + this._fullScreen + '"> </param>';
+        html += '<param name="movie" value="' + this._protocol + 'www.youtube.com/v/' + id + this._autoPlay + this._showRelated + this._fullScreen + '"> </param>';
         html += '<param name="wmode" value="transparent"> </param>';
         if(options.allowFullScreen) {
           html += '<param name="allowfullscreen" value="true"> </param>';
         }
-        html += '<embed src="http://www.youtube.com/v/' + id + this._autoPlay + this._showRelated + this._fullScreen + '"';
+        html += '<embed src="' + this._protocol + 'www.youtube.com/v/' + id + this._autoPlay + this._showRelated + this._fullScreen + '"';
         if(options.allowFullScreen) {
           html += ' allowfullscreen="true" ';
         }
@@ -197,7 +197,7 @@
       getNewEmbedCode: function(options, id) {
         var html = '';
         html += '<iframe width="' + options.playerWidth + '" height="' + options.playerHeight + '"';
-        html += ' src="http://www.youtube.com/embed/' + id + '?wmode=opaque' + this._showRelated + '" frameborder="0"';
+        html += ' src="' + this._protocol + 'www.youtube.com/embed/' + id + '?wmode=opaque' + this._showRelated + '" frameborder="0"';
         html += ' allowfullscreen></iframe>';
 
         return html;
@@ -254,9 +254,28 @@
        */
 
       handleImageClick: function(link, options) {
-        var thisImage = $('<img/>');
+        var thisImage = new Image();
+        var $thisImage = $(thisImage);
         var $link = $(link);
-        thisImage.attr({src:$link.data('yt-href') })
+
+        thisImage.onload = function() {
+          if ($thisImage.height() < $thisImage.width()) {
+            $thisImage.width(options.playerWidth).css('margin-top',parseInt($thisImage.height()/-2, 10)).css({
+              height: 'auto'
+            });
+          }
+          else {
+            $thisImage.css({
+              height: options.playerHeight,
+              width: 'auto',
+              top: '0px',
+              position: 'relative'
+            });
+          }
+          $thisImage.fadeIn();
+        };
+
+        $thisImage.attr({src:$link.data('yt-href') })
           .css({
             display: 'none',
             position: 'absolute',
@@ -265,33 +284,14 @@
 
         if(options.showInline) {
           $('li.currentvideo').removeClass('currentvideo');
-          $link.parent('li').addClass('currentvideo').html(thisImage);
+          $link.parent('li').addClass('currentvideo').html($thisImage);
         }
         else {
-          $('#' + options.holderId).html(thisImage);
+          $('#' + options.holderId).html($thisImage);
           $link.closest('ul').find('li.currentvideo').removeClass('currentvideo');
           $link.parent('li').addClass('currentvideo');
         }
 
-        //wait for image to load (webkit!), then set width or height
-        //based on dimensions of the image
-        setTimeout(function() {
-          if (thisImage.height() < thisImage.width()) {
-            thisImage.width(options.playerWidth).css('margin-top',parseInt(thisImage.height()/-2, 10)).css({
-              height: 'auto'
-            });
-          }
-          else {
-            thisImage.css({
-              height: options.playerHeight,
-              width: 'auto',
-              top: '0px',
-              position: 'relative'
-            });
-          }
-          thisImage.fadeIn();
-
-        }, 100);
 
 
         return false;
