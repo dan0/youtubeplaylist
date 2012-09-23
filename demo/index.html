@@ -10,7 +10,13 @@
 
 		$(function() {
 			$("ul.demo1").ytplaylist({deepLinks: true});
-			$("ul.demo2").ytplaylist({addThumbs:true, autoPlay: false, holderId: 'ytvideo2'});
+			$("ul.demo2").ytplaylist({
+                addThumbs:true, 
+                autoPlay: false,
+                onChange: function() {
+                    console.log('changed');
+                },
+                holderId: 'ytvideo2'});
 		});
 
 </script>

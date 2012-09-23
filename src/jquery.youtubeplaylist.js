@@ -21,6 +21,7 @@
         showRelated: true,
         allowFullScreen: false,
         deepLinks: false,
+        onChange: function(){},
         start: 1,
         secure: 'auto' //false|true|'auto'
       };
@@ -124,6 +125,7 @@
               link.click(function(e) {
                 e.preventDefault();
                 self.handleClick(link, self.options);
+                self.options.onChange.call();
               });
             }
 
