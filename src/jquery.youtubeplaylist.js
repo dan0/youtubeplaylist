@@ -81,7 +81,7 @@
         var self = this;
         var initialItem = self.options.deepLinks && window.location.hash.indexOf('#yt-gal-') !== -1 ? window.location.hash : null;
         // Setup initial classification of content
-        $(self.element).children('li').each(function(index) {
+        $(self.element).find('li').each(function(index) {
 
           var listItem = $(this);
           var listIndex = index + 1;
