@@ -239,7 +239,8 @@
           link.parent('li').addClass('currentvideo').html(self.getNewEmbedCode(self.options, link.data('yt-id')));
         }
         else {
-          $('#' + options.holderId).html(self.getNewEmbedCode(self.options, link.data('yt-id')));
+          var holder = (options.holder ? options.holder : $('#' + options.holderId));
+          holder.html(self.getNewEmbedCode(self.options, link.data('yt-id')));
           link.parent().parent('ul').find('li.currentvideo').removeClass('currentvideo');
           link.parent('li').addClass('currentvideo');
         }
@@ -289,7 +290,8 @@
           $link.parent('li').addClass('currentvideo').html($thisImage);
         }
         else {
-          $('#' + options.holderId).html($thisImage);
+          var holder = (options.holder ? options.holder : $('#' + options.holderId));
+          holder.html($thisImage);
           $link.closest('ul').find('li.currentvideo').removeClass('currentvideo');
           $link.parent('li').addClass('currentvideo');
         }
