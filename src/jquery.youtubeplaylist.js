@@ -105,7 +105,7 @@
                   thumbUrl = self._protocol + 'img.youtube.com/vi/' + ytid + '/2.jpg';
                 }
                 else {
-                  thumbUrl = seld._protocol + 'img.youtube.com/vi/' + ytid + '/0.jpg';
+                  thumbUrl = self._protocol + 'img.youtube.com/vi/' + ytid + '/0.jpg';
                 }
                 var thumbHtml = '<img src="' + thumbUrl + '" alt="' + replacedText + '" />';
                 link.empty().html(thumbHtml + replacedText).attr('title', replacedText);
