@@ -63,7 +63,7 @@
         this.options.secure ? 'https://' : 'http://';
       this._autoPlay = (this.options.autoPlay) ? '&autoplay=1' : '';
       this._showRelated = (this.options.showRelated) ? '&rel=1' : '';
-      this._fullscreen = (this.options.allowfullscreen) ? '&fs=1' : '';
+      this._fullscreen = (this.options.allowFullscreen) ? '&fs=1' : '';
       this.init();
   }
 
