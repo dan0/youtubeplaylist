@@ -1,0 +1,53 @@
+body {
+  background: #eee;
+}
+
+
+#page {
+  width: 853px;
+  padding: 20px;
+  margin: 15px auto;
+  background: white;
+  border: 1px solid #ccc;
+  box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+}
+
+.yt-playlist-list {
+  display: block;
+  list-style: none;
+  margin: 20px 0 0 0;
+  padding: 0;
+}
+
+.yt-playlist-list li {
+  margin: 0;
+  padding: 5px;
+  height: 40px;
+  line-height: 40px;
+}
+
+.yt-playlist-list li img {
+  height: 40px;
+  vertical-align: middle;
+  margin: 0 10px 0 0;
+}
+
+.yt-playlist-list a {
+  display: block;
+  border:1px solid #e1e1e1;
+  background: #eee;
+  color: #555;
+  text-decoration: none;
+  text-shadow: 0px 1px 1px rgba(255, 255, 255, 6);
+  font-family: helvetica, arial, sans-serif;
+}
+
+.yt-playlist-list a.yt-playlist-active {
+  border-color: #222;
+}
+
+.yt-playlist-player {
+  width: 853px;
+  height: 480px;
+  background: black;
+}
