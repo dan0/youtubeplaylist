@@ -95,7 +95,7 @@
 
     return '<img src="http://img.youtube.com/vi/' + id + '/' + (large ? '2' : '0') + '.jpg"/>';
 
-  }
+  };
 
 
   /**
@@ -173,7 +173,7 @@
     this._playlistsWrapper = document.createElement('div');
     this._playlistsWrapper.className = 'yt-playlists-list-wrapper';
 
-    this._playlistsList = document.createElement('ul')
+    this._playlistsList = document.createElement('ul');
     this._playlistsList.className = 'yt-playlist-list';
 
     for (var i = 0; i < this._items.length; i++) {
@@ -227,7 +227,7 @@
           break;
       }
     });
-  }
+  };
 
 
   /**
@@ -258,8 +258,9 @@
     }
     else if(currentState === 1) {
       this._player.pauseVideo();
-    };
+    }
   };
+
 
   /**
    * Move to next video in list
@@ -276,6 +277,45 @@
       return this._handleListClick(this._$playLists.find('a:first'));
     }
 
+  };
+
+
+  /**
+   * Add a video to play directly after current url
+   *
+   * @param  {String} input  Youtube URL or ID.
+   * @param  {String} text Link text.
+   */
+  
+  YoutubePlaylist.prototype.addVideoNext = function(input, text) {
+
+    if (!input) {
+      throw new Error('URL/ID not supplied');
+    }
+
+    var id = this.getVideoId(input) ? this.getVideoId(input) : input;
+    console.log(this._$activeLink);
+    $(this._buildListItem(id, text || '')).insertAfter(this._$activeLink.parent());
+    
+  };
+
+
+  /**
+   * Add a video to append video to list
+   *
+   * @param  {String} input  Youtube URL or ID.
+   * @param  {String} text Link text.
+   */
+  
+  YoutubePlaylist.prototype.addVideo = function(input, text) {
+
+    if (!input) {
+      throw new Error('URL/ID not supplied');
+    }
+
+    var id = this.getVideoId(input) ? this.getVideoId(input) : input;
+    this._playlistsList.appendChild(this._buildListItem(id, text || ''));
+    
   };
 
 
@@ -344,21 +384,28 @@
       this._player.pauseVideo();
     }
 
-
   };
 
 
+  /**
+   * Update buttons based on player state
+   *
+   * @param  {Number} state player state.
+   */
   YoutubePlaylist.prototype._updateButtons = function(state) {
+
     var playingClass = '';
     var playBtnText = 'Play';
     if(state === 1) {
       playingClass = ' playing';
       playBtnText = 'Pause';
     }
-    console.log(this._playPauseButton);
+
     this._playPauseButton[0].className = 'yt-playpause ' + PLAYER_STATES[state] + playingClass;
     this._playPauseButton[0].textContent = playBtnText;
-  }
+
+  };
+
 
   /**
    * Callback for player state changes.
@@ -414,6 +461,8 @@
           new YoutubePlaylist( this, options ));
       }
     });
-  }
+  };
+
+  window.YoutubePlaylist = YoutubePlaylist;
 
 })( jQuery, window, document );
